@@ -1,0 +1,62 @@
+Program 1: SUM OF SERIES OPERATION
+		    MOV R0, #40H		
+		    MOV R2, #5                        		
+	    	CLR A		
+		    MOV R7, A		
+	AGAIN	ADD A, @R0                         		
+		    JNC NEXT		
+		    INC R7		
+	NEXT	INC R0		
+		    DJNZ R2, AGAIN		
+
+PROGRAM 2: A switch is connected to pin P1.0 and an LED to pin P2.7. Write a program to get the status of the switch and send it to the LED.
+		SETB P1.7		
+	AGAIN	MOV C, P1.0		
+		MOV P2.7, C                		
+		SJMP AGAIN                		
+
+PROGRAM 3: Assume that 5 BCD data items are stored in RAM locations starting at 40H, as shown below. Write an ALP program to find the sum of all the numbers. The result must be in BCD.
+		MOV R0, #40H		
+		MOV R2, #5                        		
+		CLR A		
+		MOV R7, A		
+	AGAIN	ADD A, @R0                         		
+		DA A		
+		JNC NEXT		
+		INC R7		
+	NEXT	INC R0		
+		DJNZ R2, AGAIN		
+
+Program 4: Write a program to create a square wave of 50% duty cycle (with equal portions high and low) on the P1.5 bit. Timer 0 is used to generate the time delay.
+		MOV TMOD, #01H		
+	HERE	MOV TL0, #0F2H		
+		MOV TH0, #0FFH		
+		CPL P1.5		
+		ACALL DELAY		
+		SJMP HERE		
+	DELAY	SETB TR0		
+	AGAIN	JNB TF0, AGAIN		
+		CLR TR0		
+		CLR TF0		
+		RET		
+Program 5: PROGRAMMING THE 8051 TO TRANSFER DATA SERIALLY
+		CLR SM0        		
+		SETB SM1		
+		MOV A, PCON		
+		SETB ACC.7		
+		MOV PCON, A		
+		MOV TMOD, #20H		
+		MOV TH1, #243        		
+		MOV TL1, #243        		
+		SETB TR1		
+		MOV 30H, #'a'        		
+		MOV 31H, #0		
+		MOV R0, #30H		
+	Again	MOV A, @R0		
+		JZ Finish		
+		MOV SBUF, A        		
+		INC R0        		
+	$	JNB TI, $		
+		CLR TI		
+		JMP again		
+	Finish	JMP $		
