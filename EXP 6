@@ -1,0 +1,104 @@
+Program 1: SAWTOOTH WAVEFORM GENERATION (Assembly Language Program)
+		AREA SAWTOOTH, CODE, READONLY		
+		PINSEL1 EQU 0xE002C004		
+		DACR EQU 0xE006C000		
+		LDR R3,= 0X000003FF		
+		LDR R1, = PINSEL1		
+		LDR R2, = 0x00080000		
+		STR R2,[R1]		
+		LDR R0, = DACR		
+		LDR R2, = 0x0		
+	L1	LSL R1,R2,#6		
+		STR R1,[R0]		
+		ADD R2,R2,#1		
+		CMP R2,R3		
+		BLT L1			
+		LDR R2,= 0x0		
+		B        L1		
+		END		
+
+
+Sawtooth Waveform Embedded C Code:
+#include<lpc214x.h>
+int count = 0;
+int main (void)
+{
+PINSEL1 = 0X00080000;
+while(1)
+{
+For (count=0; count<1023; count++)
+{
+	DACR = (count<<6);
+}
+For (count=0; count>0; count--)
+{
+	DACR = (count<<6);
+}
+}
+}
+
+Program 2: TRIANGULAR WAVEFORM GENERATION (Assembly Language Program)
+		AREA TRI, CODE, READONLY		
+		PINSEL1 EQU 0xE002C004		
+		DACR EQU 0xE006C000		
+		LDR R3,= 0X000003FF		
+		LDR R1, = PINSEL1		
+		LDR R2, = 0x00080000		
+		STR R2,[R1]		
+		LDR R0, = DACR		
+		LDR R2, = 0x0		
+	L1	LSL R1,R2,#06		
+		STR R1,[R0]		
+		ADD R2,R2,#01		
+		CMP R2,R3		
+		BLT L1			
+	L2	LSL R1,R2,#06		
+		STR R1,[R0]		
+		SUBS R2,R2,#01		
+		BNE         L2		
+		B               L1		
+		END		
+
+Triangular Waveform Embedded C Code:
+#include<lpc214x.h>
+int count = 0;
+int main (void)
+{
+PINSEL1 = 0X00080000;
+while (1)
+{
+For (count=0; count<1023; count++)
+{
+	DACR = (count<<6);
+}
+For (count=1023; count>0; count--)
+{
+	DACR = (count<<6);
+}
+}
+}
+
+
+Program 3: SQUARE WAVEFORM GENERATION (Embedded C Code)
+#include<lpc214x.h>
+int count = 0;
+int main (void)
+{
+unsigned int value=0;
+PINSEL1 = 0X00080000;
+while(1)
+{
+for (count=0; count<1023; count++)
+{
+Value =1023;
+DACR = (value<<6);
+}
+For (count=0; count<1023; count++)
+{
+		value =0;
+		DACR = (value<<6);
+	}
+}
+}
+	
+
