@@ -1,0 +1,166 @@
+PROGRAM-1:
+Write an 8051 C program to toggle all the bits of port P1 continuously with some delay in between. Use Timer 0, 16-bit mode to generate the delay.
+Solution:
+#include <reg51.h>
+void T0Delay(void);
+void main(void){
+while (1) {
+P1=0x55;
+T0Delay();
+P1=0xAA;
+T0Delay();
+}
+}
+void T0Delay(){
+TMOD=0x01;
+TL0=0x00;
+TH0=0x35;
+TR0=1;
+while (TF0==0);
+TR0=0;
+}
+
+
+PROGRAM-2:
+Write an 8051 C program to toggle only bit P1.5 continuously every 50ms. Use Timer 0, mode 1 (16-bit) to create the delay. Test the program on the (a) AT89C51 and (b) DS89C420.
+Solution:
+#include <reg51.h>
+void T0M1Delay(void);
+sbit mybit=P1^5;
+void main(void){
+while (1) {
+mybit = ~mybit;
+T0M1Delay();
+}
+}
+void T0M1Delay(void){
+TMOD=0x01;
+TL0=0xFD;
+TH0=0x4B;
+TR0=1;
+while (TF0==0);
+TR0=0;
+TF0=0;
+}
+
+
+PROGRAM-3:
+Write an 8051 C program to create a frequency of 2500 Hz on pin P2.7. Use Timer 1, mode 2 to create delay.
+Solution:
+#include <reg51.h>
+void T1M2Delay(void);
+sbit mybit = P2^7;
+void main(void){
+unsigned char x;
+while (1) {
+mybit = ~mybit;
+T1M2Delay();
+}
+}
+void T1M2Delay(void){
+TMOD=0x20;
+TH1=-184;
+TR1=1;
+while (TF1==0);
+TR1=0;
+TF1=0;
+}
+
+
+PROGRAM-4:
+Write a C program for 8051 to transfer the letter “A” serially at 4800 baud continuously. Use 8-bit data and 1 stop bit.
+Solution:
+#include <reg51.h>
+void main(void){
+TMOD=0x20; //use Timer 1, mode 2
+TH1=0xFA; //4800 baud rate
+SCON=0x50;
+TR1=1;
+while (1) {
+SBUF=‘A’; //place value in buffer
+while (TI==0);
+TI=0;
+}
+}
+
+
+PROGRAM-5:
+Program the 8051 in C to receive bytes of data serially and put them in P1. Set the baud rate at 4800, 8-bit data, and 1 stop bit.
+Solution:
+#include <reg51.h>
+void main(void){
+unsigned char mybyte;
+TMOD=0x20; //use Timer 1, mode 2
+TH1=0xFA; //4800 baud rate
+SCON=0x50;
+TR1=1; //start timer
+while (1) { //repeat forever
+while (RI==0); //wait to receive
+mybyte=SBUF; //save value
+P1=mybyte; //write value to port
+RI=0;
+}
+}
+
+
+PROGRAM-6:
+Write a C program that continuously gets a single bit of data from P1.7 and sends it to P1.0, while simultaneously creating a square wave of 200 μs period on pin P2.5. Use Timer 0 to create the square wave. Assume that XTAL = 11.0592 MHz.
+Solution:
+We will use timer 0 mode 2 (auto-reload). One half of the period is
+100 μs. 100/1.085 μs = 92, and TH0 = 256 - 92 = 164 or A4H
+#include <reg51.h>
+sbit SW =P1^7;
+sbit IND =P1^0;
+sbit WAVE =P2^5;
+void timer0(void) interrupt 1 {
+WAVE=~WAVE; //toggle pin
+}
+void main() {
+SW=1; //make switch input
+TMOD=0x02;
+TH0=0xA4; //TH0=-92
+IE=0x82; //enable interrupt for timer 0
+while (1) {
+IND=SW; //send switch to LED
+}
+}
+
+
+
+PROGRAM-7:
+Write a C program using interrupts to do the following: 
+(a) Receive data serially and send it to P0
+(b) Read port P1, transmit data serially, and give a copy to P2
+(c) Make timer 0 generate a square wave of 5 kHz frequency on P0.1 
+Assume that XTAL = 11.0592 MHz. Set the baud rate at 4800.
+Solution:
+#include <reg51.h>
+sbit WAVE =P0^1;
+void timer0() interrupt 1 {
+WAVE=~WAVE; //toggle pin
+}
+void serial0() interrupt 4 {
+if (TI==1) {
+TI=0; //clear interrupt
+}
+else {
+P0=SBUF; //put value on pins
+RI=0; //clear interrupt
+}
+}
+void main() {
+unsigned char x;
+P1=0xFF; //make P1 an input
+TMOD=0x22;
+TH1=0xF6; //4800 baud rate
+SCON=0x50;
+TH0=0xA4; //5 kHz has T=200us
+IE=0x92; //enable interrupts
+TR1=1; //start timer 1
+TR0=1; //start timer 0
+while (1) {
+x=P1; //read value from pins
+SBUF=x; //put value in buffer
+P2=x; //write value to pins
+}
+} 
