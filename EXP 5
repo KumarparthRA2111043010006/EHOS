@@ -1,0 +1,47 @@
+Program 1: ADDITION OPERATION USING ARM ALP
+		AREA P1, CODE, READONLY		
+		ENTRY		
+		MOV R1, #0x03		
+		MOV R2, #0x02		
+		ADD R0, R1, R2		
+L	  B   L		
+		END		
+
+Program 2: ARITHMETIC OPERATIONS USING ARM ALP
+		AREA P3, CODE, READONLY		
+		ENTRY		
+		MOV R0, #0x40000000		
+		LDR R1, [R0]		
+		MOV R2, #0x01		
+	L1	MUL R3, R2, R1		
+		MOV R2, R3		
+		SUBS R1, #0x01		
+		BNE L1		
+		ADD R0, #0x04		
+		STR R3, [R0]		
+		END		
+
+Program 3: ARITHMETIC OPERATIONS USING ARM ALP
+		AREA P7, CODE, READONLY		
+		num1 equ 3		
+		num2 equ 2		
+		ENTRY		
+		MOV R1, #num1		
+		MOV R2, #num2		
+		ADD R3, R1, R2		
+		SUB R4, R1, R2		
+		RSBS R4, R1, R2		
+		MUL R5, R1, R2		
+		MLA R6, R1, R2, R3		
+	L	B    L		
+		END		
+
+Program 4: LOGICAL OR OPERATION USING ARM ALP
+		AREA P6, CODE, READONLY		
+		ENTRY		
+		MOV R0, #0x40000000		
+		LDR R1, [R0]		
+		MOV R3, #0x00		
+		MOV R2, #0x04		
+		ORR R3, R1, R2		
+		END		
